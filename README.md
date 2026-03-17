@@ -1,10 +1,7 @@
 # 🔐 OriginBank Secure Network Infrastructure
-### MSc Cybersecurity | LD7007 Network Security | Northumbria University London
 
-[![Module](https://img.shields.io/badge/Module-LD7007%20Network%20Security-blue)](.)
 [![Tools](https://img.shields.io/badge/Tool-Cisco%20Packet%20Tracer-green)](.)
 [![Platform](https://img.shields.io/badge/Platform-Cisco%20IOS%20%7C%20ASA-orange)](.)
-[![Status](https://img.shields.io/badge/Status-Completed-brightgreen)](.)
 
 ---
 
@@ -147,9 +144,7 @@ Each configuration was validated with:
 ## 👤 Author
 
 **Soriful Islam Shoaib**
-MSc Cybersecurity — Northumbria University, London Campus
-Student ID: 24053223
-Module: LD7007 Network Security
+
 
 ---
 

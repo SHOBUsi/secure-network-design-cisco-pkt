@@ -2,6 +2,8 @@
 
 [![Tools](https://img.shields.io/badge/Tool-Cisco%20Packet%20Tracer-green)](.)
 [![Platform](https://img.shields.io/badge/Platform-Cisco%20IOS%20%7C%20ASA-orange)](.)
+<img width="1168" height="668" alt="Screenshot 2026-03-18 at 2 18 32 AM" src="https://github.com/user-attachments/assets/04632986-e98c-4b68-9c34-32e0a103bc78" />
+
 
 ---
 

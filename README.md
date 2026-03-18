@@ -1,153 +1,112 @@
-# 🔐 OriginBank Secure Network Infrastructure
+# 🔐 OriginBank — Secure Network Infrastructure
 
-[![Tools](https://img.shields.io/badge/Tool-Cisco%20Packet%20Tracer-green)](.)
-[![Platform](https://img.shields.io/badge/Platform-Cisco%20IOS%20%7C%20ASA-orange)](.)
-<img width="1168" height="668" alt="Screenshot 2026-03-18 at 2 18 32 AM" src="https://github.com/user-attachments/assets/04632986-e98c-4b68-9c34-32e0a103bc78" />
+> Designing, configuring, and validating a hardened enterprise network from scratch using Cisco Packet Tracer — covering firewall zoning, VLANs, OSPF, ACLs, IPSec VPN, AAA, and IPS.
 
-
----
-
-## 📋 Overview
-
-This project presents a **full design, configuration, and validation of a secure network infrastructure** for a fictional banking organisation, *OriginBank*, using **Cisco Packet Tracer**. The original network was identified as vulnerable due to weak authentication practices, misconfigured protocols (POP3/ICMP on public-facing interfaces), and insufficient access controls.
-
-The assignment demonstrates how to harden and transform a vulnerable enterprise network into a **secure, segmented, and policy-compliant infrastructure** aligned with the **CIA Triad** (Confidentiality, Integrity, Availability).
+![Platform](https://img.shields.io/badge/Platform-Cisco%20Packet%20Tracer-blue?style=flat-square)
+![Protocol](https://img.shields.io/badge/Routing-OSPF-green?style=flat-square)
+![VPN](https://img.shields.io/badge/VPN-IPSec%20AES--256-orange?style=flat-square)
+![Firewall](https://img.shields.io/badge/Firewall-Cisco%20ASA-red?style=flat-square)
+![Status](https://img.shields.io/badge/Status-Completed-brightgreen?style=flat-square)
 
 ---
 
-## 🏗️ Network Architecture
+## The Problem
 
-The topology consists of three main zones:
+OriginBank's existing network had no meaningful security architecture. POP3 and ICMP were exposed on public-facing interfaces. There was no access control between zones, no encrypted management, no inter-site VPN, and no intrusion detection. Any attacker with basic network access could enumerate devices, pivot laterally, and exfiltrate data unchallenged.
 
-| Zone | Interface | Security Level | Subnet |
-|------|-----------|---------------|--------|
-| HQ (Internal) | Gig1/1 | 100 (Highest) | 192.168.0.64/26 |
-| DMZ | Gig1/3 | 60 | 192.168.0.0/26 |
-| Outside (Internet/Branch) | Gig1/2 | 0 (Lowest) | WAN |
-
-The design includes HQ VLANs, a Branch network, a DMZ, and WAN segments — all connected through a **Cisco ASA firewall** and routers running **OSPF** for dynamic routing.
+This project redesigns the entire network from the ground up — segmented, hardened, monitored, and encrypted end-to-end.
 
 ---
 
-## 🛠️ Technologies & Tools
+## What Was Built
 
-- **Cisco Packet Tracer** — Network simulation
-- **Cisco IOS** — Router and switch configuration
-- **Cisco ASA Firewall** — Perimeter security and zone-based policy enforcement
-- **OSPF** — Dynamic routing protocol
-- **IEEE 802.1Q** — VLAN trunking
-- **IPSec VPN** — Site-to-site encrypted tunnel
-- **SSH v2 + AAA (RADIUS/TACACS+)** — Secure device management
-- **IOS IPS** — Intrusion Prevention System
-- **DHCP, DNS, HTTP/HTTPS, SMTP, Syslog** — Core network services
+| Component | Technology |
+|---|---|
+| Network Simulation | Cisco Packet Tracer |
+| Perimeter Security | Cisco ASA Firewall (zone-based) |
+| Dynamic Routing | OSPF |
+| Network Segmentation | VLANs + 802.1Q Trunking + Inter-VLAN Routing |
+| Access Control | Extended ACLs (router + ASA) |
+| Encrypted Management | SSH v2 + AAA (local) |
+| Site-to-Site Encryption | IPSec VPN — IKEv1, AES-256, SHA-HMAC |
+| Threat Detection | IOS IPS (signature-based) |
+| Core Services | DHCP, DNS, Web (DMZ), Syslog/NTP |
+| Address Translation | PAT/NAT on ASA |
 
 ---
 
-## 📦 Project Structure
+## Network Architecture
+
+The topology is divided into four security zones:
 
 ```
-originbank-network-security/
-│
-├── Block_A_Architecture/
-│   ├── IP_Allocation_and_Connectivity
-│   ├── Device_Hardening
-│   ├── DNS_Web_Syslog_Servers
-│   └── OSPF_VLAN_InterVLAN_Routing
-│
-├── Block_B_Secure_Operations/
-│   ├── ACL_Firewall_Rules
-│   ├── SSH_and_AAA_Configuration
-│   ├── Site_to_Site_IPSec_VPN
-│   └── IOS_IPS_Configuration
-│
-├── Block_C_Research/
-│   ├── Zero_Trust_Network_Framework
-│   ├── VPN_Reliability_Analysis
-│   └── IPSec_Cryptographic_Mechanisms
-│
-└── README.md
+Internet
+    │
+[Cisco ASA Firewall]  ← perimeter enforcement
+    ├── DMZ (Security Level 60)       192.168.0.0/26
+    │     ├── Web Server              192.168.0.2
+    │     ├── Exchange (Mail)         192.168.0.3
+    │     └── Public DNS Server       192.168.0.4
+    │
+    ├── HQ LAN (Security Level 100)   192.168.0.64/26
+    │     ├── Internal DNS/DHCP       192.168.0.66
+    │     ├── Syslog/NTP Server       192.168.0.67
+    │     └── Workstations (DHCP)     192.168.0.68–126
+    │
+    └── Branch LAN (via IPSec VPN)    192.168.0.128/25
+          ├── Branch DNS/DHCP         192.168.0.130
+          └── Workstations (DHCP)     192.168.0.131–254
 ```
 
----
-
-## ✅ Key Implementations
-
-### Block A — Architecture & Communication
-
-- **IP Addressing**: Structured static IP allocation for servers; DHCP pools for clients across HQ and Branch VLANs
-- **Device Hardening**: Strong authentication, secure remote management (SSH only), disabled unused ports, legal warning banners, and port security on all routers and switches
-- **Core Services**:
-  - DNS servers deployed per subnet for internal/external name resolution
-  - Web server hosted in the DMZ for controlled public access
-  - Syslog server in HQ for centralised log collection from all infrastructure devices
-- **Dynamic Routing**: OSPF deployed across all routers (chosen over RIPv2 for faster convergence and scalability)
-- **VLAN Trunking & Inter-VLAN Routing**: 802.1Q trunking configured on switches; Router-on-a-Stick with sub-interfaces for inter-VLAN communication
-
-### Block B — Secure Operations & Service Delivery
-
-- **ACLs on ASA Firewall**: Zone-based rules enforcing Zero Trust — DMZ cannot reach internal HQ; outside users can only reach the Web and DNS servers in the DMZ
-- **PAT/NAT**: Configured on ASA for DMZ servers to reach the internet using the public-facing IP
-- **SSH v2 + AAA**: Telnet replaced with SSH v2; AAA authentication enforced on console and VTY lines; RSA 1024-bit key pairs generated per device
-- **Site-to-Site IPSec VPN**: Encrypted tunnel established between HQ and Branch networks using IKEv1 with AES encryption and SHA hashing
-- **IOS IPS**: Signature-based intrusion prevention deployed on the HQ router to monitor and block anomalous traffic
-
-### Block C — Research & Development
-
-- **Zero Trust Framework**: Analysis of micro-segmentation, least-privilege access, and continuous verification applied to OriginBank's infrastructure
-- **VPN Reliability**: Examination of IPSec tunnel reliability, failover considerations, and protocol limitations
-- **IPSec Cryptographic Mechanisms**: Key exchange (IKE Phase 1 & 2), encryption (AES), and integrity verification (HMAC-SHA)
+The ASA enforces **Zero Trust between zones** — no traffic passes unless explicitly permitted.
 
 ---
 
-## 🔒 Security Policy Highlights
+## Walkthrough
 
-| Policy | Implementation |
-|--------|---------------|
-| Zero Trust — DMZ to Internal | ASA default deny (lower → higher security level) |
-| External access to DMZ | HTTP (80), HTTPS (443), DNS (53) only |
-| HQ to DMZ | HTTP, HTTPS, SMTP, POP3, DNS, SSH (admin only), ICMP (admin only) |
-| HQ to Outside | HTTP, HTTPS, DNS, ICMP; blocks P2P (6881-6889), SQL (1433), RDP (3389) |
-| Management Access | SSH v2 only; Telnet disabled on all devices |
-| Encryption | IPSec AES tunnel between HQ and Branch |
+The full implementation is broken into four detailed sections:
 
----
-
-## 📊 Verification & Testing
-
-Each configuration was validated with:
-- `ping` and `traceroute` between zones to confirm ACL enforcement
-- `show ip ospf neighbor` to verify dynamic routing adjacency
-- `show vlan brief` and `show interfaces trunk` for VLAN verification
-- HTTP/DNS connectivity tests from external clients through public IP (NAT)
-- IPS signature trigger tests to confirm threat detection
-- SSH session establishment from the admin host
+| # | Section | What's Covered |
+|---|---------|----------------|
+| 01 | [Architecture & IP Design](docs/01-architecture-and-ip-design.md) | Topology, IP allocation, DHCP, device hardening, DNS/Web/Syslog setup |
+| 02 | [Routing & Segmentation](docs/02-routing-and-segmentation.md) | OSPF, VLAN trunking, inter-VLAN routing (Router-on-a-Stick) |
+| 03 | [Firewall, ACLs & VPN](docs/03-firewall-acl-vpn.md) | ASA zone policy, ACL rules, PAT/NAT, SSH/AAA, site-to-site IPSec VPN |
+| 04 | [IPS & Security Analysis](docs/04-ips-and-security-analysis.md) | IOS IPS deployment, Zero Trust analysis, IPSec cryptography deep-dive |
 
 ---
 
-## 💡 Key Learnings
+## Key Security Decisions
 
-- How **layered defence** (device hardening + ACL + firewall + VPN + IPS) dramatically reduces attack surface
-- The role of **DMZ architecture** in isolating public-facing services from internal networks
-- Trade-offs between RIPv2 and **OSPF** in enterprise routing scenarios
-- Real-world application of the **Zero Trust** model in network design
-- How **IPSec IKE Phase 1 and Phase 2** establish and maintain a secure VPN tunnel
+**Why OSPF over RIPv2?**
+Faster convergence and better scalability for a multi-site topology. RIPv2's 30-second update cycle is a liability in a network where routing changes need to propagate immediately.
 
----
+**Why host the Web Server in the DMZ?**
+If the web server is compromised, the attacker is trapped in the DMZ. They cannot reach the HQ VLAN because the ASA blocks all DMZ → HQ traffic by default (lower security level cannot initiate connections to higher).
 
-## 📚 References
+**Why IPSec over a simple GRE tunnel?**
+GRE provides no encryption. All inter-site traffic between HQ and Branch carries sensitive banking data — AES-256 encryption with SHA-HMAC authentication is non-negotiable.
 
-- Cisco Systems. (n.d.). *Cisco ASA Series Firewall CLI Configuration Guide*
-- NIST SP 800-77 Rev.1 — Guide to IPsec VPNs
-- Shah, S. (2020). *DMZ Network Architecture Best Practices*
-- Sheehan, M. (2025). *VLAN Trunking and 802.1Q Encapsulation*
+**Why replace Telnet with SSH + AAA?**
+Telnet transmits credentials in plaintext. A single packet capture on the management VLAN exposes every device password. SSH v2 with RSA-1024 eliminates that attack vector entirely.
 
 ---
 
-## 👤 Author
+## Skills Demonstrated
 
-**Soriful Islam Shoaib**
-
+- Enterprise network design and IP addressing strategy
+- Cisco IOS configuration (routers, switches, ASA)
+- Firewall zone policy and layered access control
+- VPN tunnel design and cryptographic configuration
+- Intrusion prevention and centralised log management
+- Security framework analysis (NIST Zero Trust SP 800-207)
 
 ---
 
-> *This project was completed as part of an individual coursework assignment. The Cisco Packet Tracer simulation file is available upon request.*
+## Author
+
+**Soriful Islam Shoaib** — Cybersecurity Engineer
+[GitHub](https://github.com/) · [LinkedIn](https://linkedin.com/)
+
+---
+
+> *Simulation built in Cisco Packet Tracer. The `.pkt` file is available in this repository.*

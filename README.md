@@ -68,10 +68,10 @@ The full implementation is broken into four detailed sections:
 
 | # | Section | What's Covered |
 |---|---------|----------------|
-| 01 | [Architecture & IP Design](docs/01-architecture-and-ip-design.md) | Topology, IP allocation, DHCP, device hardening, DNS/Web/Syslog setup |
-| 02 | [Routing & Segmentation](docs/02-routing-and-segmentation.md) | OSPF, VLAN trunking, inter-VLAN routing (Router-on-a-Stick) |
-| 03 | [Firewall, ACLs & VPN](docs/03-firewall-acl-vpn.md) | ASA zone policy, ACL rules, PAT/NAT, SSH/AAA, site-to-site IPSec VPN |
-| 04 | [IPS & Security Analysis](docs/04-ips-and-security-analysis.md) | IOS IPS deployment, Zero Trust analysis, IPSec cryptography deep-dive |
+| 01 | [Architecture & IP Design](/01-architecture-and-ip-design.md) | Topology, IP allocation, DHCP, device hardening, DNS/Web/Syslog setup |
+| 02 | [Routing & Segmentation](/02-routing-and-segmentation.md) | OSPF, VLAN trunking, inter-VLAN routing (Router-on-a-Stick) |
+| 03 | [Firewall, ACLs & VPN](/03-firewall-acl-vpn.md) | ASA zone policy, ACL rules, PAT/NAT, SSH/AAA, site-to-site IPSec VPN |
+| 04 | [IPS & Security Analysis](/04-ips-and-security-analysis.md) | IOS IPS deployment, Zero Trust analysis, IPSec cryptography deep-dive |
 
 ---
 

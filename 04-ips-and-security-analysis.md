@@ -1,38 +1,38 @@
 # 04 — IPS & Security Analysis
 
-[← Firewall, ACLs & VPN](03-firewall-acl-vpn.md) | [← Back to README](../README.md)
+[← Firewall, ACLs & VPN](03-firewall-acl-vpn.md) | [↑ Back to README](README.md)
 
 ---
 
 ## Overview
 
-ACLs and firewalls are reactive — they enforce rules based on what you already know to block. An Intrusion Prevention System (IPS) is proactive — it inspects traffic in real time and blocks known attack patterns before they reach their target.
+ACLs and firewalls are reactive; they enforce rules based on what you already know to block. An Intrusion Prevention System (IPS) is proactive; it inspects traffic in real time and blocks known attack patterns before they reach their target.
 
 This section covers:
 
-1. **IOS IPS deployment** on the Border Router — what it does and how it's configured
-2. **Zero Trust analysis** — where OriginBank's design aligns with NIST SP 800-207 and where the gaps are
-3. **IPSec cryptography deep-dive** — the mechanics behind the VPN security
+1. **IOS IPS deployment** on the Border Router:  what it does and how it's configured
+2. **Zero Trust analysis** where OriginBank's design aligns with NIST SP 800-207 and where the gaps are
+3. **IPSec cryptography deep-dive** the mechanics behind the VPN security
 
 ---
 
 ## IOS IPS — Intrusion Prevention System
 
-The IPS sits on the Border Router — the first Cisco IOS device traffic hits after leaving the public internet. Positioning it here means threats are detected and dropped before they reach the ASA, the DMZ, or any internal resource.
+The IPS sits on the Border Router, the first Cisco IOS device that traffic hits after leaving the public internet. Positioning it here means threats are detected and dropped before they reach the ASA, the DMZ, or any internal resource.
 
 ### How IOS IPS Works
 
-IPS compares incoming packets against a signature database. Each signature describes a known attack pattern — an ICMP flood, a port scan, a specific exploit payload. When a match is found, the IPS can:
+IPS compares incoming packets against a signature database. Each signature describes a known attack pattern, an ICMP flood, a port scan, or a specific exploit payload. When a match is found, the IPS can:
 
 - **Alert** — log the event to Syslog and continue forwarding
 - **Drop** — silently discard the packet
 - **Reset** — send a TCP RST to terminate the connection
 
-For OriginBank, the default action for matched signatures is **drop + alert** — the attack is blocked and logged centrally.
+For OriginBank, the default action for matched signatures is **drop + alert**;  the attack is blocked and logged centrally.
 
 ### Step 1 — Create the IPS Signature Store Directory
 
-```cisco
+```
 mkdir ipsdir
 ip ips config location flash:ipsdir
 ```
@@ -41,7 +41,7 @@ This tells the router where to store IPS signature data.
 
 ### Step 2 — Create an IPS Rule
 
-```cisco
+```
 ip ips name ORIGINBANK-IPS
 
 ! Apply SDEE event notification (for logging)
@@ -50,9 +50,9 @@ ip ips notify sdee
 
 ### Step 3 — Enable Key IPS Signatures
 
-Not every signature needs to be enabled — enabling everything creates noise and can impact performance. The priority signatures for a banking network:
+Not every signature needs to be enabled; enabling everything creates noise and can impact performance. The priority signatures for a banking network:
 
-```cisco
+```
 ip ips signature-category
  category all
   retired true
@@ -60,11 +60,11 @@ ip ips signature-category
   retired false
 ```
 
-This retires all signatures by default, then activates only the curated `ios_ips basic` category — which covers the most critical, high-confidence threats without overwhelming the router's CPU.
+This retires all signatures by default, then activates only the curated `ios_ips basic` category, which covers the most critical, high-confidence threats without overwhelming the router's CPU.
 
 ### Step 4 — Apply IPS to Interfaces
 
-```cisco
+```
 interface Serial0/1/0
  ip ips ORIGINBANK-IPS in
  ip ips ORIGINBANK-IPS out
@@ -74,7 +74,7 @@ Applying inbound and outbound ensures both incoming attacks from the internet an
 
 ### Step 5 — Configure Logging to Syslog
 
-```cisco
+```
 logging 192.168.0.67
 logging trap warnings
 ip ips notify log
@@ -102,13 +102,13 @@ The IPS should detect the flood pattern, drop the excess packets, and log an ale
 
 ### Verify Active Signatures
 
-```cisco
+```
 show ip ips all
 ```
 
 Shows all enabled signatures and their current status. Look for the basic category signatures showing as active.
 
-```cisco
+```
 show ip ips statistics
 ```
 
@@ -118,7 +118,7 @@ Shows counts of packets inspected, alerts triggered, and packets dropped.
 
 ## Zero Trust Analysis
 
-NIST SP 800-207 defines Zero Trust as an architecture where **no entity is implicitly trusted** — every access request is verified regardless of where it originates, whether inside or outside the network perimeter.
+NIST SP 800-207 defines Zero Trust as an architecture where **no entity is implicitly trusted** every access request is verified regardless of where it originates, whether inside or outside the network perimeter.
 
 OriginBank's design aligns with several Zero Trust principles, but not all of them.
 
@@ -128,7 +128,7 @@ OriginBank's design aligns with several Zero Trust principles, but not all of th
 VLANs divide the network into distinct trust zones. Traffic between zones must pass through the ASA, which applies explicit policy. A compromised workstation in VLAN 20 cannot reach the Syslog server in VLAN 99 without traversing the router and hitting an ACL.
 
 **Least-privilege access**
-ACL rules are written with minimum necessary access. The auditor account has privilege 5 — enough to run `show` commands, not enough to make configuration changes. External users can only reach port 80 and 443 on the web server — nothing else.
+ACL rules are written with the minimum necessary access. The auditor account has privilege 5 — enough to run `show` commands, not enough to make configuration changes. External users can only reach port 80 and 443 on the web server — nothing else.
 
 **Assume breach**
 The DMZ exists precisely because OriginBank assumes the web server *will* be compromised at some point. By placing it outside the HQ security level, a web server breach doesn't become a network breach.
@@ -142,7 +142,7 @@ Centralised Syslog + IPS provides visibility into traffic events across the netw
 ### Where the Gaps Are
 
 | Gap | Current State | Recommended Improvement |
-|-----|--------------|--------------------------|
+|-----|--------------|------------------------|
 | Authentication | Local user database | Centralised RADIUS/TACACS+ with MFA |
 | Identity verification | Username/password only | Certificate-based auth or hardware tokens |
 | Application-layer control | Network-layer ACLs only | ZTNA — access control per application, per user |
@@ -155,7 +155,7 @@ The current implementation is a strong **network-layer Zero Trust** baseline. Ma
 
 ## IPSec Cryptography Deep-Dive
 
-Understanding *what* was configured is one thing. Understanding *why it works* is what separates a network engineer from someone who just ran commands.
+Understanding *what* was configured is one thing. Understanding *why it works* is what separates a network engineer from someone who just runs commands.
 
 ### IKE Phase 1 — Building the Management Tunnel
 
@@ -186,7 +186,7 @@ The pre-shared key (`ORIGINBANK_VPN_PSK`) never travels across the network. It's
 
 With Phase 1 protecting the management channel, Phase 2 negotiates the actual IPSec parameters:
 
-```cisco
+```
 crypto ipsec transform-set TS-AES-SHA esp-aes 256 esp-sha-hmac
 ```
 
@@ -200,7 +200,7 @@ In **tunnel mode**, the original packet (headers + payload) is fully encapsulate
 
 ### Perfect Forward Secrecy (PFS)
 
-```cisco
+```
 set pfs group5
 ```
 
@@ -213,7 +213,7 @@ AES-128 is computationally secure against all known attacks. But AES-256 provide
 ### Limitations of the Current VPN Design
 
 | Limitation | Impact | Mitigation |
-|-----------|--------|-----------|
+|------------|--------|-----------|
 | Pre-shared key authentication | If the PSK is leaked, both sites are compromised | Migrate to PKI certificate-based auth with IKEv2 |
 | IKEv1 | Older protocol, more complex negotiation | Upgrade to IKEv2 (simpler, more secure, built-in EAP support) |
 | SHA-1 HMAC | SHA-1 is considered weak for new deployments | Use SHA-256 or SHA-384 |
@@ -226,7 +226,7 @@ AES-128 is computationally secure against all known attacks. But AES-256 provide
 Pulling the full design together, OriginBank's network now provides:
 
 | Security Goal | How It's Achieved |
-|---|---|
+|--------------|------------------|
 | **Confidentiality** | IPSec AES-256 encrypts all inter-site traffic; SSH encrypts management sessions |
 | **Integrity** | SHA-HMAC verifies packets aren't tampered with in transit |
 | **Availability** | OSPF reconverges in seconds on path failure; Syslog enables rapid incident response |
@@ -260,4 +260,4 @@ This design is a strong foundation, but a production deployment would add:
 
 ---
 
-[← Firewall, ACLs & VPN](03-firewall-acl-vpn.md) | [← Back to README](../README.md)
+[← Firewall, ACLs & VPN](03-firewall-acl-vpn.md) | [↑ Back to README](README.md)

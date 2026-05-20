@@ -1,12 +1,12 @@
-# 🔐 OriginBank — Secure Network Infrastructure
+# 🔐 OriginBank: Secure Network Infrastructure
 
 > Designing, configuring, and validating a hardened enterprise network from scratch using Cisco Packet Tracer — covering firewall zoning, VLANs, OSPF, ACLs, IPSec VPN, AAA, and IPS.
 
-![Platform](https://img.shields.io/badge/Platform-Cisco%20Packet%20Tracer-blue?style=flat-square)
-![Protocol](https://img.shields.io/badge/Routing-OSPF-green?style=flat-square)
-![VPN](https://img.shields.io/badge/VPN-IPSec%20AES--256-orange?style=flat-square)
-![Firewall](https://img.shields.io/badge/Firewall-Cisco%20ASA-red?style=flat-square)
-![Status](https://img.shields.io/badge/Status-Completed-brightgreen?style=flat-square)
+[![Platform](https://img.shields.io/badge/Platform-Cisco%20Packet%20Tracer-blue?style=flat-square)](https://www.netacad.com/courses/packet-tracer)
+[![Routing](https://img.shields.io/badge/Routing-OSPF-green?style=flat-square)]()
+[![VPN](https://img.shields.io/badge/VPN-IPSec%20AES--256-orange?style=flat-square)]()
+[![Firewall](https://img.shields.io/badge/Firewall-Cisco%20ASA-red?style=flat-square)]()
+[![Status](https://img.shields.io/badge/Status-Completed-brightgreen?style=flat-square)]()
 
 ---
 
@@ -14,14 +14,14 @@
 
 OriginBank's existing network had no meaningful security architecture. POP3 and ICMP were exposed on public-facing interfaces. There was no access control between zones, no encrypted management, no inter-site VPN, and no intrusion detection. Any attacker with basic network access could enumerate devices, pivot laterally, and exfiltrate data unchallenged.
 
-This project redesigns the entire network from the ground up — segmented, hardened, monitored, and encrypted end-to-end.
+This project redesigns the entire network from the ground up, segmented, hardened, monitored, and encrypted end-to-end.
 
 ---
 
 ## What Was Built
 
 | Component | Technology |
-|---|---|
+|-----------|-----------|
 | Network Simulation | Cisco Packet Tracer |
 | Perimeter Security | Cisco ASA Firewall (zone-based) |
 | Dynamic Routing | OSPF |
@@ -58,7 +58,7 @@ Internet
           └── Workstations (DHCP)     192.168.0.131–254
 ```
 
-The ASA enforces **Zero Trust between zones** — no traffic passes unless explicitly permitted.
+The ASA enforces **Zero Trust between zones**, which means no traffic passes unless explicitly permitted.
 
 ---
 
@@ -67,11 +67,11 @@ The ASA enforces **Zero Trust between zones** — no traffic passes unless expli
 The full implementation is broken into four detailed sections:
 
 | # | Section | What's Covered |
-|---|---------|----------------|
-| 01 | [Architecture & IP Design](/01-architecture-and-ip-design.md) | Topology, IP allocation, DHCP, device hardening, DNS/Web/Syslog setup |
-| 02 | [Routing & Segmentation](/02-routing-and-segmentation.md) | OSPF, VLAN trunking, inter-VLAN routing (Router-on-a-Stick) |
-| 03 | [Firewall, ACLs & VPN](/03-firewall-acl-vpn.md) | ASA zone policy, ACL rules, PAT/NAT, SSH/AAA, site-to-site IPSec VPN |
-| 04 | [IPS & Security Analysis](/04-ips-and-security-analysis.md) | IOS IPS deployment, Zero Trust analysis, IPSec cryptography deep-dive |
+|---|---------|---------------|
+| 01 | [Architecture & IP Design](01-architecture-and-ip-design.md) | Topology, IP allocation, DHCP, device hardening, DNS/Web/Syslog setup |
+| 02 | [Routing & Segmentation](02-routing-and-segmentation.md) | OSPF, VLAN trunking, inter-VLAN routing (Router-on-a-Stick) |
+| 03 | [Firewall, ACLs & VPN](03-firewall-acl-vpn.md) | ASA zone policy, ACL rules, PAT/NAT, SSH/AAA, site-to-site IPSec VPN |
+| 04 | [IPS & Security Analysis](04-ips-and-security-analysis.md) | IOS IPS deployment, Zero Trust analysis, IPSec cryptography deep-dive |
 
 ---
 
@@ -102,10 +102,29 @@ Telnet transmits credentials in plaintext. A single packet capture on the manage
 
 ---
 
+## Getting Started
+
+1. Install [Cisco Packet Tracer](https://www.netacad.com/courses/packet-tracer) (v8.x or later recommended)
+2. Open `enterprise-network-security-lab.pkt`
+3. Use the CLI on any device to inspect configurations
+
+**Useful verification commands:**
+
+| Command | Purpose |
+|---------|---------|
+| `show ip ospf neighbor` | Verify OSPF neighbours in FULL state |
+| `show interfaces trunk` | Confirm VLAN trunk ports |
+| `show crypto isakmp sa` | Verify IKE Phase 1 SA |
+| `show crypto ipsec sa` | Verify IPSec tunnel / packet counters |
+| `show ip ips all` | View active IPS signatures |
+| `show running-config` | Full device configuration |
+
+---
+
 ## Author
 
-**Soriful Islam Shoaib** — Cybersecurity Engineer
-[GitHub](https://github.com/) · [LinkedIn](https://linkedin.com/)
+**Soriful Islam Shoaib** — Cybersecurity Engineer  
+[GitHub](https://github.com/SHOBUsi) · [LinkedIn](https://www.linkedin.com/in/soriful-islam-shoaib/)
 
 ---
 

@@ -1,6 +1,6 @@
 # 01 — Architecture & IP Design
 
-[← Back to README](../README.md) | [Next: Routing & Segmentation →](02-routing-and-segmentation.md)
+[← Back to README](README.md) | [Next: Routing & Segmentation →](02-routing-and-segmentation.md)
 
 ---
 
@@ -8,7 +8,7 @@
 
 Before a single command gets typed, the network needs a coherent design. This section covers the decisions behind the IP addressing strategy, the server placement, and the hardening baseline applied to every device in the topology.
 
-A poorly planned address space creates operational headaches for years. Getting it right upfront — static where it matters, DHCP where it doesn't — makes every subsequent configuration step cleaner.
+A poorly planned address space creates operational headaches for years. Getting it right upfront, static where it matters, DHCP where it doesn't, makes every subsequent configuration step cleaner.
 
 ---
 
@@ -17,17 +17,17 @@ A poorly planned address space creates operational headaches for years. Getting 
 The network is divided into four logical zones, each with its own subnet. The principle is simple: **separate concerns, control the boundaries**.
 
 | Zone | Subnet | Mask | Usable Range |
-|------|--------|------|--------------|
+|------|--------|------|-------------|
 | DMZ | 192.168.0.0 | /26 | .1 – .62 |
 | HQ LAN | 192.168.0.64 | /26 | .65 – .126 |
 | Branch LAN | 192.168.0.128 | /25 | .129 – .254 |
 | WAN Links | 20.20.0.0 | /30 per link | Point-to-point |
 
-### Static vs DHCP — the rule of thumb
+### Static vs DHCP: the rule of thumb
 
 **Static** for anything that needs to be reliably reachable: servers, gateways, firewall interfaces, network admin devices. If a DNS server's IP changes, everything that depends on it breaks.
 
-**DHCP** for everything else: workstations, user laptops, branch PCs. They don't need a fixed address — they just need one.
+**DHCP** for everything else: workstations, user laptops, branch PCs. They don't need a fixed address; they just need one.
 
 ### Static IP Configuration (Servers)
 
@@ -64,13 +64,13 @@ Subnet Mask:     255.255.255.192
 Max Users:       58
 ```
 
-Workstations on the HQ VLAN are set to DHCP — they request an address on boot and get one from this pool automatically.
+Workstations on the HQ VLAN are set to DHCP; they request an address on boot and get one from this pool automatically.
 
 ### Router Interface Configuration
 
 Routers need IP addresses on each interface to act as gateways. A default route points all unknown traffic toward the ASA:
 
-```cisco
+```
 interface GigabitEthernet7/0
  ip address 192.168.0.65 255.255.255.192
  no shutdown
@@ -87,7 +87,7 @@ Every router and switch in the topology gets a hardening baseline before any ser
 ### What was applied to every device
 
 | Control | Why it matters |
-|---------|----------------|
+|---------|---------------|
 | Strong enable/console passwords | Prevents physical and local access without credentials |
 | `service password-encryption` | Encrypts passwords stored in the config file |
 | SSH v2 only (Telnet disabled) | Eliminates plaintext credential exposure |
@@ -98,7 +98,7 @@ Every router and switch in the topology gets a hardening baseline before any ser
 
 ### Router hardening commands
 
-```cisco
+```
 hostname HQ-Router
 enable secret StrongP@ss123
 service password-encryption
@@ -122,18 +122,18 @@ no ip http server
 no ip http secure-server
 ```
 
-### Switch hardening — disabling unused ports
+### Switch hardening, disabling unused ports
 
 An open switch port is an open door. Any unused interface gets shut down:
 
-```cisco
+```
 interface range FastEthernet0/7-24
  shutdown
 ```
 
 Port security can also be added to active ports to restrict which MAC addresses are allowed:
 
-```cisco
+```
 interface FastEthernet0/1
  switchport port-security
  switchport port-security maximum 1
@@ -157,7 +157,7 @@ Server > Services > DNS > ON
 Add A records:
 
 | Hostname | Type | IP |
-|----------|------|----|
+|----------|------|-----|
 | www.originbank.com | A | 192.168.0.2 |
 | ns.originbank.com | A | 192.168.0.4 |
 | mail.originbank.com | A | 192.168.0.3 |
@@ -190,7 +190,7 @@ The Syslog server sits inside HQ — away from the public-facing DMZ. All router
 
 Enable logging on each router:
 
-```cisco
+```
 logging 192.168.0.67
 logging trap informational
 service timestamps log datetime msec
@@ -216,4 +216,4 @@ Before moving on, confirm:
 
 ---
 
-[← Back to README](../README.md) | [Next: Routing & Segmentation →](02-routing-and-segmentation.md)
+[← Back to README](README.md) | [Next: Routing & Segmentation →](02-routing-and-segmentation.md)

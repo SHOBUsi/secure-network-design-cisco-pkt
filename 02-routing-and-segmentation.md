@@ -6,10 +6,10 @@
 
 ## Overview
 
-With addressing in place, the next challenge is making traffic flow efficiently across the topology — while keeping different network segments logically isolated. This section covers two things:
+With addressing in place, the next challenge is making traffic flow efficiently across the topology, while keeping different network segments logically isolated. This section covers two things:
 
-1. **OSPF** — dynamic routing so routers automatically learn paths to every subnet
-2. **VLANs + Inter-VLAN routing** — logical network segmentation within the HQ switch fabric
+1. **OSPF**: dynamic routing so routers automatically learn paths to every subnet
+2. **VLANs + Inter-VLAN routing**: logical network segmentation within the HQ switch fabric
 
 These aren't just technical requirements. They're the foundation of the security model. You cannot enforce zone-based access control if devices in different security zones are on the same flat network.
 
@@ -27,7 +27,7 @@ Both are IGPs (Interior Gateway Protocols), but RIPv2 has no place in a modern e
 | Loop prevention | Slow (timers) | Topology-aware (SPF) |
 | Authentication | Optional MD5 | Supported |
 
-RIPv2's 30-second update cycle and 180-second holddown timer mean a routing failure can black-hole traffic for three minutes. In a banking network, that's unacceptable. OSPF detects failures within seconds and reconverges immediately.
+RIPv2's 30-second update cycle and 180-second hold-down timer mean a routing failure can black-hole traffic for three minutes. In a banking network, that's unacceptable. OSPF detects failures within seconds and reconverges immediately.
 
 ---
 
@@ -77,7 +77,7 @@ Neighbor ID     Pri   State       Dead Time   Address         Interface
 show ip route ospf
 ```
 
-You should see `O` (OSPF) entries for every remote subnet — HQ sees Branch, Branch sees HQ, all WAN links are learned automatically.
+You should see `O` (OSPF) entries for every remote subnet HQ sees Branch, Branch sees HQ, and all WAN links are learned automatically.
 
 ### End-to-End Connectivity Test
 
@@ -91,7 +91,7 @@ A successful ping here confirms OSPF is working correctly across all routers.
 
 ## VLAN Segmentation
 
-VLANs divide the HQ switch fabric into logical segments. Without them, all HQ devices share the same broadcast domain — a single compromised host can sniff traffic from every other device on the switch.
+VLANs divide the HQ switch fabric into logical segments. Without them, all HQ devices share the same broadcast domain, and a single compromised host can sniff traffic from every other device on the switch.
 
 The VLAN plan for HQ:
 
@@ -126,7 +126,7 @@ interface FastEthernet0/2
  spanning-tree portfast
 ```
 
-> `spanning-tree portfast` skips the 30-second STP listening/learning delay on end-device ports — workstations get connectivity immediately on boot.
+> `spanning-tree portfast` skips the 30-second STP listening/learning delay on end-device ports, workstations get connectivity immediately on boot.
 
 ### Trunk Port Configuration
 
@@ -165,7 +165,7 @@ Confirms which ports are trunking and which VLANs are active on each trunk.
 
 ## Inter-VLAN Routing (Router-on-a-Stick)
 
-VLANs create isolation — but HQ workstations (VLAN 20) still need to reach the DMZ servers (VLAN 10). Inter-VLAN routing solves this by creating sub-interfaces on the router, one per VLAN. Each sub-interface acts as the default gateway for that VLAN.
+VLANs create isolation, but HQ workstations (VLAN 20) still need to reach the DMZ servers (VLAN 10). Inter-VLAN routing solves this by creating sub-interfaces on the router, one per VLAN. Each sub-interface acts as the default gateway for that VLAN.
 
 The physical interface connecting the router to the switch is set to trunk mode. The router then processes the 802.1Q tags and routes between VLANs.
 
@@ -192,7 +192,7 @@ interface GigabitEthernet7/0.99
  description MGMT-Gateway
 ```
 
-Each sub-interface gets the gateway IP for its VLAN. Workstations in VLAN 20 have their default gateway set to `192.168.0.65` — traffic destined for another subnet hits that gateway, gets routed via the sub-interface, and lands in the right VLAN.
+Each sub-interface gets the gateway IP for its VLAN. Workstations in VLAN 20 have their default gateway set to `192.168.0.65`. Traffic destined for another subnet hits that gateway, gets routed via the sub-interface, and lands in the right VLAN.
 
 ### Verify Sub-interfaces Are Up
 

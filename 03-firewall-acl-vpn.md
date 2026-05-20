@@ -6,13 +6,13 @@
 
 ## Overview
 
-This is where the security posture becomes real. Routing makes traffic flow — firewalls and ACLs decide what's *allowed* to flow. This section covers:
+This is where the security posture becomes real. Routing makes traffic flow through firewalls and ACLs decide what's *allowed* to flow. This section covers:
 
-1. **ASA zone-based firewall policy** — enforcing Zero Trust between DMZ, HQ, and the outside world
-2. **ACL rules** — granular traffic control on each zone boundary
-3. **PAT/NAT** — allowing internal hosts to reach the internet without exposing private addresses
-4. **SSH v2 + AAA** — locking down management access
-5. **Site-to-site IPSec VPN** — encrypting all HQ ↔ Branch traffic
+1. **ASA zone-based firewall policy**: enforcing Zero Trust between DMZ, HQ, and the outside world
+2. **ACL rules**: granular traffic control on each zone boundary
+3. **PAT/NAT**: allowing internal hosts to reach the internet without exposing private addresses
+4. **SSH v2 + AAA**: locking down management access
+5. **Site-to-site IPSec VPN**: encrypting all HQ ↔ Branch traffic
 
 ---
 
@@ -57,7 +57,7 @@ interface GigabitEthernet1/2
 
 ## Access Control Lists
 
-ACLs are applied **inbound on each interface** — they filter traffic as it enters that zone. The philosophy here is **default deny**: everything is blocked unless there's an explicit permit rule for it.
+ACLs are applied **inbound on each interface**; they filter traffic as it enters that zone. The philosophy here is **default deny**: everything is blocked unless there's an explicit permit rule for it.
 
 ### HQ → DMZ
 
@@ -87,7 +87,7 @@ access-group HQ-DMZ in interface HQ
 
 ### Outside → DMZ
 
-The outside world should only reach the web server and DNS server. Nothing else.
+The outside world should only reach the web server and the DNS server. Nothing else.
 
 ```cisco
 access-list OUT-DMZ extended permit tcp any host 192.168.0.2 eq 80
@@ -115,13 +115,13 @@ access-list HQ-OUT extended deny ip any any
 access-group HQ-OUT in interface HQ
 ```
 
-> Blocking RDP (3389) outbound prevents employees from tunnelling out to external remote desktops — a common data exfiltration path. Blocking BitTorrent ports (6881-6889) and SQL (1433) removes unnecessary risk.
+> Blocking RDP (3389) outbound prevents employees from tunnelling out to external remote desktops, a common data exfiltration path. Blocking BitTorrent ports (6881-6889) and SQL (1433) removes unnecessary risk.
 
 ---
 
 ## PAT/NAT — Address Translation
 
-The DMZ web server uses a private IP (192.168.0.2), but external users reach it via the ASA's public IP. NAT maps incoming connections on the public IP to the private server address. For outbound traffic, PAT translates all internal addresses to the single public IP.
+The DMZ web server uses a private IP (192.168.0.2), but external users reach it via the ASA's public IP. NAT maps incoming connections on the public IP to the private server address. For outbound traffic, PAT translates all internal addresses to a single public IP.
 
 ### Static NAT — Web Server
 
@@ -192,7 +192,7 @@ line vty 0 4
 - `privilege 15` — full admin access (all commands)
 - `privilege 5` — read-only style access (show commands, limited config)
 
-The auditor account exists for compliance reviews — they can inspect the configuration without being able to change it.
+The auditor account exists for compliance reviews; they can inspect the configuration without being able to change it.
 
 ### Verify SSH Access
 
@@ -208,7 +208,7 @@ A successful SSH login confirms the configuration is working. Attempting Telnet 
 
 ## Site-to-Site IPSec VPN
 
-All traffic between HQ (192.168.0.64/26) and Branch (192.168.0.128/25) must be encrypted. A site-to-site IPSec VPN tunnel handles this — it's transparent to end users and encrypts everything at the network layer.
+All traffic between HQ (192.168.0.64/26) and Branch (192.168.0.128/25) must be encrypted. A site-to-site IPSec VPN tunnel handles this; it's transparent to end users and encrypts everything at the network layer.
 
 ### How IPSec Works Here
 
@@ -242,7 +242,7 @@ crypto isakmp policy 10
 crypto isakmp key ORIGINBANK_VPN_PSK address 20.20.0.26
 ```
 
-> Group 5 = 1536-bit Diffie-Hellman. This governs the key exchange — a larger group means more computational work for an attacker trying to break the key derivation.
+> Group 5 = 1536-bit Diffie-Hellman. This governs the key exchange; a larger group means more computational work for an attacker trying to break the key derivation.
 
 ### Step 3 — Configure Transform Set (Phase 2)
 
@@ -270,7 +270,7 @@ interface Serial0/1/0
 
 ### Branch Router — Mirror Configuration
 
-The Branch router uses the same settings with HQ's WAN IP as the peer:
+The Branch router uses the same settings as HQ's WAN IP as the peer:
 
 ```cisco
 access-list 100 permit ip 192.168.0.128 0.0.0.127 192.168.0.64 0.0.0.63
@@ -315,7 +315,7 @@ dst            src            state    conn-id  slot  status
 show crypto ipsec sa
 ```
 
-Look for incrementing `#pkts encaps` and `#pkts decaps` counters — this confirms packets are being encrypted and decrypted through the tunnel.
+Look for incrementing `#pkts encaps` and `#pkts decaps` counters. This confirms packets are being encrypted and decrypted through the tunnel.
 
 In Packet Tracer, you can also inspect a packet at the WAN interface and observe the **ESP header** — confirming the payload is encrypted before traversing the public network.
 

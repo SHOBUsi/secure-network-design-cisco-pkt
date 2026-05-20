@@ -18,6 +18,8 @@ This project redesigns the entire network from the ground up, segmented, hardene
 
 ---
 
+<img width="1660" height="682" alt="Screenshot 2026-05-20 at 14 17 07" src="https://github.com/user-attachments/assets/fdcc9126-5888-4467-b012-0eaf87624745" />
+
 ## What Was Built
 
 | Component | Technology |

@@ -125,7 +125,7 @@ Telnet transmits credentials in plaintext. A single packet capture on the manage
 
 ## Author
 
-**Soriful Islam Shoaib** — Cybersecurity Engineer  
+**Soriful Islam Shoaib**   
 [GitHub](https://github.com/SHOBUsi) · [LinkedIn](https://www.linkedin.com/in/soriful-islam-shoaib/)
 
 ---

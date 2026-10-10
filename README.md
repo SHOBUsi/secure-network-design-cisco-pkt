@@ -1,4 +1,4 @@
-# 🔐 OriginBank: Secure Network Infrastructure
+# 🔐 Network Security Architecture & Defense Implementation  
 
 > Designing, configuring, and validating a hardened enterprise network from scratch using Cisco Packet Tracer — covering firewall zoning, VLANs, OSPF, ACLs, IPSec VPN, AAA, and IPS.
 
